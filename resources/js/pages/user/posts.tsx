@@ -133,11 +133,11 @@ export default function PostsPage({ posts = defaultPosts, categories = [], filte
     }, [posts.data]);
 
     // Fetch posts data from API
-    useEffect(() => {
-        fetch('/api/posts')
-            .then((res) => res.json())
-            .then((data) => setPosts(data));
-    }, []);
+    // useEffect(() => {
+    //     fetch('/api/posts')
+    //         .then((res) => res.json())
+    //         .then((data) => setPosts(data));
+    // }, []);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -213,14 +213,15 @@ export default function PostsPage({ posts = defaultPosts, categories = [], filte
                             >
                                 {/* IMAGE SECTION: This comes first */}
                                 <div className="relative">
-                                    <img
-                                        src={post.image_url || '/assets/fallback.jpg'}
-                                        alt={post.title || 'Post Image'}
-                                        className="h-40 w-full rounded-t object-cover"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).src = '/assets/fallback.jpg';
-                                        }}
-                                    />
+                                    {post.image_url ? (
+                        <img
+                          src={post.image_url}
+                          alt={post.title || 'Post Image'}
+                          className="w-20 h-12 object-cover rounded"
+                        />
+                      ) : (
+                        <span className="text-gray-400">No Image</span>
+                      )}
 
                                     <div className="bg-opacity-70 absolute bottom-1 left-1 rounded bg-white px-1 text-xs text-gray-500">
                                         {post.image_url || 'No image_url'}

@@ -10,10 +10,3 @@ Route::get('/hello', function (Request $request) {
 
 
 Route::apiResource('posts', PostApiController::class);
-// Route::get('/posts', function () {
-//     return Post::with('category')->get()->transform(function ($post) {
-//         $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
-//         return $post;
-//     });
-// });
-Route::get('/posts', [PostController::class, 'userIndex']);

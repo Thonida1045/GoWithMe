@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\Province;
 use App\Models\Post;
 use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Http\Resources\PostResource;
+use Illuminate\Support\Arr;
 
 class PostController extends Controller
 {
@@ -17,46 +20,33 @@ class PostController extends Controller
     {
         $query = Post::query();
 
-        if ($request->has('search')) {
+        // Search
+        if ($request->filled('search')) {
             $search = $request->input('search');
-            $query->where('title', 'like', '%' . $search . '%')
-                  ->orWhere('content', 'like', '%' . $search . '%');
+            $query->where('title', 'like', "%$search%")
+                  ->orWhere('content', 'like', "%$search%");
         }
 
-        if ($request->has('category') && $request->input('category') !== 'all') {
-            $query->where('category_id', $request->input('category'));
-        }
-
-        if ($request->has('sort')) {
-            if ($request->input('sort') === 'latest') {
-                $query->orderBy('created_at', 'desc');
-            } elseif ($request->input('sort') === 'most_commented') {
-                $query->withCount('comments')->orderBy('comments_count', 'desc');
-            }
+        // Sort
+        if ($request->input('sort') === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } elseif ($request->input('sort') === 'most_commented') {
+            $query->withCount('comments')->orderBy('comments_count', 'desc');
         } else {
             $query->orderBy('created_at', 'desc');
         }
 
-        $posts = $query->with(['category', 'comments.user'])->withCount('comments')->paginate(10);
-
-        // ✅ Add image_url
-        $posts->getCollection()->transform(function ($post) {
-            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
-            return $post;
-        });
-
+        // Use the query with eager loading for category, province, and comments.user
+        $posts = $query->with(['category', 'province', 'comments.user'])->paginate(10);
         $categories = Category::all();
+        $provinces = \App\Models\Province::all();
 
         return Inertia::render('admin/posts', [
-    'categories' => $categories,
-    'posts' => $posts,
-    'filters' => [
-        'search' => $request->input('search', ''),
-        'category' => $request->input('category', 'all'),
-        'sort' => $request->input('sort', 'latest'),
-        'image_url' => $request->input('image_url', null),
-    ],
-]);
+            'posts' => $posts,
+            'categories' => $categories,   // <-- Pass to view
+            'provinces' => $provinces,     // <-- Pass to view
+            'filters' => $request->only(['search', 'sort', 'category', 'province']),
+        ]);
     }
 
     public function userIndex(Request $request)
@@ -102,8 +92,10 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::all();
+        $provinces = \App\Models\Province::all();
         return Inertia::render('admin/posts/create', [
             'categories' => $categories,
+            'provinces' => $provinces,
         ]);
     }
 
@@ -113,36 +105,33 @@ class PostController extends Controller
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'title' => ['required', 'string', 'max:255', Rule::unique('posts', 'title')],
+        'title' => 'required|string|max:255',
         'content' => 'required|string',
         'category_id' => 'required|exists:categories,id',
-        'published_at' => 'nullable|date',
+        'province_id' => 'required|exists:provinces,id',
         'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'published_at' => 'nullable|date',
     ]);
 
-    if ($request->filled('published_at')) {
-        $validated['published_at'] = Carbon::parse($request->published_at)->format('Y-m-d H:i:s');
-    } else {
-        $validated['published_at'] = null;
-    }
-
-    $validated['slug'] = Str::slug($request->title);
-
-    // First, create the post (without the image yet)
-    $post = Post::create(Arr::except($validated, ['image']));
-
-    // Then store the image using the post ID
+    // Handle image upload
     if ($request->hasFile('image')) {
-        $extension = $request->file('image')->getClientOriginalExtension();
-        $imageName = 'post_' . $post->id . '.' . $extension;
-        $imagePath = $request->file('image')->storeAs('posts', $imageName, 'public');
-
-        // Update post with image path
-        $post->update(['image' => $imagePath]);
+        $imagePath = $request->file('image')->store('posts', 'public');
+        $validated['image'] = $imagePath;
     }
+
+    // Generate unique slug from title
+    $baseSlug = Str::slug($validated['title']);
+    $slug = $baseSlug;
+    $counter = 1;
+    while (Post::where('slug', $slug)->exists()) {
+        $slug = $baseSlug . '-' . $counter++;
+    }
+    $validated['slug'] = $slug;
+
+    Post::create($validated);
 
     return redirect()->route('admin.posts.index')
-        ->with('success', 'Post Added Successfully');
+        ->with('success', 'Post created successfully!');
 }
 
     /**
@@ -166,14 +155,16 @@ class PostController extends Controller
      */
     public function edit(string $id)
 {
-    $post = Post::with('category')->findOrFail($id);
+    $post = Post::with(['category', 'province'])->findOrFail($id);
     $categories = Category::all();
+    $provinces = Province::all();
 
     $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
 
     return Inertia::render('admin/posts/edit', [
         'post' => $post,
         'categories' => $categories,
+        'provinces' => $provinces,
     ]);
 }
     /**
@@ -184,42 +175,33 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255', Rule::unique('posts', 'title')->ignore($post->id, 'id')],
+            'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
+            'province_id' => 'required|exists:provinces,id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'published_at' => 'nullable|date',
-            'remove_image' => 'nullable|boolean',
         ]);
 
-        $imagePath = $post->image;
-
+        // Handle image upload
         if ($request->hasFile('image')) {
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
             $imagePath = $request->file('image')->store('posts', 'public');
-        } elseif ($request->boolean('remove_image')) {
-            if ($post->image) {
-                Storage::disk('public')->delete($post->image);
-            }
-            $imagePath = null;
+            $validated['image'] = $imagePath;
         }
 
-        $validated['image'] = $imagePath;
-
-        if ($request->filled('published_at')) {
-            $validated['published_at'] = Carbon::parse($request->published_at)->format('Y-m-d H:i:s');
-        } else {
-            $validated['published_at'] = null;
+        // Generate unique slug from title (ignore current post's slug)
+        $baseSlug = Str::slug($validated['title']);
+        $slug = $baseSlug;
+        $counter = 1;
+        while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
+            $slug = $baseSlug . '-' . $counter++;
         }
-
-        $validated['slug'] = Str::slug($request->title);
+        $validated['slug'] = $slug;
 
         $post->update($validated);
 
         return redirect()->route('admin.posts.index')
-            ->with('success', 'Post Updated Successfully');
+            ->with('success', 'Post updated successfully!');
     }
 
     /**

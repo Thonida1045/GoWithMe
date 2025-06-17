@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
 
 class Post extends Model
 {
@@ -17,6 +18,7 @@ class Post extends Model
         'slug',
         'content',
         'category_id',
+        'province_id',
         'published_at',
         'image'
     ];
@@ -28,10 +30,16 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function province(): BelongsTo
+    {
+        return $this->belongsTo(Province::class);
+    }
+
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
     }
+
 
     // public function getImageUrlAttribute(): ?string
     // {

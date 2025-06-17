@@ -22,6 +22,7 @@ Route::prefix('admin')->name('admin.')->group(function(){
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('posts', PostController::class)->except(['show']);
     Route::resource('provinces', ProvinceController::class)->except(['show']);
+    // Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
 });
 
 Route::prefix('user')-> name('user.')->group(function(){
@@ -40,6 +41,7 @@ Route::get('/api/posts', function () {
         return $post;
     });
 });
+
 
 
 

@@ -12,8 +12,10 @@ class ProvinceController extends Controller
      */
     public function index()
     {
-        $provinces = Province::all();
-        return response()->json($provinces);
+        $provinces = \App\Models\Province::all();
+        return \Inertia\Inertia::render('admin/provinces', [
+            'provinces' => $provinces,
+        ]);
     }
 
     /**
