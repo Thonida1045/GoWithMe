@@ -3,7 +3,6 @@ import { router, Head, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast, Toaster } from "sonner";
 
@@ -25,6 +24,12 @@ interface Post {
         id: number;
         name: string;
     };
+    province?: {
+        id: number;
+        name_en: string;
+        name_km: string;
+    };
+    image_url?: string | null;
     comments: Comment[];
     comments_count: number;
     created_at: string;
@@ -58,6 +63,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function PostShow({ post }: PostShowProps) {
     const [comment, setComment] = useState('');
     const { auth } = usePage<PageProps>().props;
+    console.log('image_url:', post.image_url);
 
 
    const handleSubmitComment = (e: React.FormEvent) => {
@@ -102,14 +108,29 @@ export default function PostShow({ post }: PostShowProps) {
                 </div>
 
                 <div className="bg-white rounded-lg shadow p-6">
+                    {post.image_url && (
+                        <div className="mb-6 flex justify-center">
+                            <img
+                                src={post.image_url}
+                                alt={post.title}
+                                className="rounded-lg max-h-96 object-contain border"
+                                style={{ maxWidth: '100%' }}
+                            />
+                        </div>
+                    )}
                     <div className="flex items-center gap-4 mb-4 text-sm text-gray-500">
                         <span>{post.category.name}</span>
+                        {post.province && (
+                            <>
+                                <span>•</span>
+                                <span>{post.province.name_en}</span>
+                            </>
+                        )}
                         <span>•</span>
                         <span>{new Date(post.created_at).toLocaleDateString()}</span>
                         <span>•</span>
                         <span>{post.comments_count} comments</span>
                     </div>
-                    
                     <div className="prose max-w-none mb-8">
                         {post.content}
                     </div>
@@ -160,4 +181,4 @@ export default function PostShow({ post }: PostShowProps) {
             </div>
         </AppLayout>
     );
-} 
+}

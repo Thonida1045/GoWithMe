@@ -32,8 +32,22 @@ class PostController extends Controller
             $query->orderBy('created_at', 'asc');
         } elseif ($request->input('sort') === 'most_commented') {
             $query->withCount('comments')->orderBy('comments_count', 'desc');
+        } elseif ($request->input('sort') === 'province') {
+            $query->orderBy('province_id', 'asc');
+        } elseif ($request->input('sort') === 'category') {
+            $query->orderBy('category_id', 'asc');
         } else {
             $query->orderBy('created_at', 'desc');
+        }
+
+        // Filter by category
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        // Filter by province
+        if ($request->filled('province')) {
+            $query->where('province_id', $request->input('province'));
         }
 
         // Use the query with eager loading for category, province, and comments.user
@@ -50,41 +64,45 @@ class PostController extends Controller
     }
 
     public function userIndex(Request $request)
-{
-    $query = Post::query()
-                 ->whereNotNull('published_at')
-                 ->where('published_at', '<=', now());
+    {
+        $query = Post::query()
+                     ->whereNotNull('published_at')
+                     ->where('published_at', '<=', now());
 
-    if ($request->has('search')) {
-        $search = $request->input('search');
-        $query->where('title', 'like', '%' . $search . '%')
-              ->orWhere('content', 'like', '%' . $search . '%');
-    }
-
-    if ($request->has('category') && $request->input('category') !== 'all') {
-        $query->where('category_id', $request->input('category'));
-    }
-
-    if ($request->has('sort')) {
-        if ($request->input('sort') === 'latest') {
-            $query->orderBy('published_at', 'desc');
-        } elseif ($request->input('sort') === 'most_commented') {
-            $query->withCount('comments')->orderBy('comments_count', 'desc');
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
         }
-    } else {
-        $query->orderBy('published_at', 'desc');
+
+        if ($request->has('category') && $request->input('category') !== 'all') {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        if ($request->has('sort')) {
+            if ($request->input('sort') === 'latest') {
+                $query->orderBy('published_at', 'desc');
+            } elseif ($request->input('sort') === 'most_commented') {
+                $query->withCount('comments')->orderBy('comments_count', 'desc');
+            }
+        } else {
+            $query->orderBy('published_at', 'desc');
+        }
+
+        $posts = $query->with(['category'])->withCount('comments')->paginate(10);
+
+        // Add image_url attribute
+        $posts->getCollection()->transform(function ($post) {
+            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
+            return $post;
+        });
+
+        return Inertia::render('user/posts', [
+            'posts' => $posts,
+            'categories' => Category::all(),
+            'filters' => $request->only(['search', 'sort', 'category']),
+        ]);
     }
-
-    $posts = $query->with(['category'])->withCount('comments')->paginate(10);
-
-    // Add image_url attribute
-    $posts->getCollection()->transform(function ($post) {
-        $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
-        return $post;
-    });
-
-    return response()->json($posts); // <-- Important!
-}
 
     /**
      * Show the form for creating a new post (Admin).

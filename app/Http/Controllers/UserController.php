@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Post;
+use App\Models\Category;
+use App\Models\Province;
 use App\Models\Comment; // ✅ Added missing import
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,7 +20,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Post::with(['category', 'comments'])
+        $query = Post::with(['category', 'province', 'comments'])
             ->withCount('comments')
             ->when($request->search, function ($query, $search) {
                 $query->where('title', 'like', "%{$search}%");
@@ -37,25 +39,40 @@ class UserController extends Controller
                 'id' => $post->id,
                 'title' => $post->title ?? '',
                 'content' => $post->content ?? '',
-                'category' =>[
+                'category' => [
                     'id' => $post->category->id ?? 0,
                     'name' => $post->category->name ?? '',
                 ],
+                'province' => $post->province ? [
+                    'id' => $post->province->id,
+                    'name_en' => $post->province->name_en,
+                    'name_km' => $post->province->name_km,
+                ] : null,
                 'comments_count' => $post->comments_count ?? 0,
                 'created_at' => $post->created_at?->toISOString(),
+                'image_url' => $post->image ? asset('storage/' . $post->image) : null,
             ];
         });
 
-        $categories = \App\Models\Category::all()->map(function ($category) {
+        $categories = Category::all()->map(function ($category) {
             return [
                 'id' => $category->id,
                 'name' => $category->name,
             ];
         });
 
+        $provinces = Province::all()->map(function ($province) {
+            return [
+                'id' => $province->id,
+                'name_en' => $province->name_en,
+                'name_km' => $province->name_km,
+            ];
+        });
+
         return Inertia::render('user/posts', [
             'posts' => $posts,
             'categories' => $categories,
+            'provinces' => $provinces,
             'filters' => array_merge([
                 'search' => '',
                 'category' => 'all',
@@ -76,7 +93,7 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $post = Post::with(['category', 'comments.user'])
+        $post = Post::with(['category', 'province', 'comments.user'])
             ->withCount('comments')
             ->findOrFail($id);
 
@@ -85,10 +102,15 @@ class UserController extends Controller
                 'id' => $post->id,
                 'title' => $post->title ?? '',
                 'content' => $post->content ?? '',
-                'category' => [ 
+                'category' => [
                     'id' => $post->category->id ?? 0,
                     'name' => $post->category->name ?? '',
                 ],
+                'province' => $post->province ? [
+                    'id' => $post->province->id,
+                    'name_en' => $post->province->name_en,
+                    'name_km' => $post->province->name_km,
+                ] : null,
                 'comments' => $post->comments->map(function ($comment) {
                     return [
                         'id' => $comment->id,
@@ -102,6 +124,7 @@ class UserController extends Controller
                 }),
                 'comments_count' => $post->comments_count ?? 0,
                 'created_at' => $post->created_at?->toISOString() ?? '',
+                'image_url' => $post->image ? asset('storage/' . $post->image) : null, // <-- Add this line
             ],
         ]);
     }

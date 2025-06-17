@@ -260,6 +260,36 @@ export default function AdminPostsPage(props: AdminPostsPageProps) {
                         className="w-64"
                     />
                     <select
+                        value={props.filters?.category || ""}
+                        onChange={e => {
+                            router.get(route('admin.posts.index'), { ...props.filters, category: e.target.value }, {
+                                preserveState: true,
+                                preserveScroll: true,
+                            });
+                        }}
+                        className="border rounded px-3 py-2"
+                    >
+                        <option value="">All Categories</option>
+                        {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
+                    <select
+                        value={props.filters?.province || ""}
+                        onChange={e => {
+                            router.get(route('admin.posts.index'), { ...props.filters, province: e.target.value }, {
+                                preserveState: true,
+                                preserveScroll: true,
+                            });
+                        }}
+                        className="border rounded px-3 py-2"
+                    >
+                        <option value="">All Provinces</option>
+                        {provinces.map(prov => (
+                            <option key={prov.id} value={prov.id}>{prov.name_en}</option>
+                        ))}
+                    </select>
+                    <select
                         value={props.filters?.sort || "latest"}
                         onChange={e => {
                             router.get(route('admin.posts.index'), { ...props.filters, sort: e.target.value }, {

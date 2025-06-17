@@ -212,20 +212,18 @@ export default function PostsPage({ posts = defaultPosts, categories = [], filte
                                 onClick={() => router.visit(route('user.posts.show', post.id))} // Make entire card clickable
                             >
                                 {/* IMAGE SECTION: This comes first */}
-                                <div className="relative">
+                                <div className="relative aspect-video w-full">
                                     {post.image_url ? (
-                        <img
-                          src={post.image_url}
-                          alt={post.title || 'Post Image'}
-                          className="w-20 h-12 object-cover rounded"
-                        />
-                      ) : (
-                        <span className="text-gray-400">No Image</span>
-                      )}
-
-                                    <div className="bg-opacity-70 absolute bottom-1 left-1 rounded bg-white px-1 text-xs text-gray-500">
-                                        {post.image_url || 'No image_url'}
-                                    </div>
+                                        <img
+                                            src={post.image_url}
+                                            alt={post.title || 'Post Image'}
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-gray-100">
+                                            <span className="text-gray-400">No Image</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex flex-grow flex-col p-6">

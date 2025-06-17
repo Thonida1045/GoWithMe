@@ -12,7 +12,7 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'image_url' => $this->image_url, // ✅ Accessor from model
+            'image_url' => $this->image ? asset('storage/' . $this->image) : null, // ✅ Accessor from model
             'published_at' => $this->published_at,
             'category' => $this->whenLoaded('category'),
         ];
