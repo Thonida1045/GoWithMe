@@ -69,7 +69,7 @@ const defaultFilters = {
     search: '',
     sort: '',
     province: '',
-    category: 'Hotel', // Set default category to Hotel
+    category: '', // Set default category to empty string
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -82,14 +82,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function HotelsPage({ posts = defaultPosts, provinces = [], filters = defaultFilters }: HotelsPageProps) {
     const [search, setSearch] = useState(filters?.search ?? '');
     const [sortBy, setSortBy] = useState(filters?.sort ?? 'latest');
-    // Remove category state, always use 'Hotel' in params
-
+    // Use category from filters, allow empty string
     const getRouterParams = (newPage?: number) => ({
         page: newPage || posts.current_page,
         search: search,
         sort: sortBy,
         province: filters?.province || '',
-        category: 'Hotel', // Always send category as 'Hotel'
+        category: filters?.category || '', // Use current filter value, can be empty
     });
 
     const handleSearch = (value: string) => {

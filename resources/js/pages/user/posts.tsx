@@ -161,13 +161,13 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Posts" />
-            <Toaster richColors closeButton position="top-right" />
-            <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
+            <Toaster richColors closeButton position="top-right" theme="system" />
+            <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8 bg-white dark:bg-[#18181b] transition-colors duration-300 min-h-screen">
                 {' '}
                 {/* Adjusted padding and gap */}
                 
                 <div className="mb-6 flex flex-wrap items-end gap-4 w-full">
-                    <h3 className="text-xl font-bold tracking-tight text-gray-900 mb-0 mr-6 whitespace-nowrap">
+                    <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-0 mr-6 whitespace-nowrap">
                         Blog Posts
                     </h3>
                     {/* Filters Section */}
@@ -266,7 +266,7 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                     <img
                         src={"/storage/board/Board.gif"}
                         alt="Board"
-                        className="block w-full max-w-full h-[60vh] object-contain rounded shadow-lg border border-blue-200 bg-white"
+                        className="block w-full max-w-full h-[60vh] object-contain rounded shadow-lg border border-blue-200 bg-white dark:bg-[#23232a] dark:border-gray-700"
                         style={{ marginTop: '0.5rem', width: '100%', maxWidth: '100%', height: '60vh' }}
                     />
                 </div>
@@ -284,47 +284,47 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                             return (
                                 <div
                                     key={post.id}
-                                    className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-purple-100 shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] min-h-[420px] h-full"
+                                    className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-blue-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a] shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] min-h-[420px] h-full"
                                     style={{ minHeight: 420, height: '100%' }}
                                     onClick={() => router.visit(route('user.posts.show', post.id))}
                                 >
                                     {/* IMAGE SECTION: This comes first */}
-                                    <div className="relative aspect-video w-full bg-gradient-to-tr from-blue-200 via-purple-100 to-pink-100">
+                                    <div className="relative aspect-video w-full bg-gradient-to-tr from-blue-200 via-purple-100 to-pink-100 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a]">
                                         {post.image_url ? (
                                             <img
                                                 src={post.image_url}
                                                 alt={post.title || 'Post Image'}
-                                                className="h-full w-full object-cover rounded-t-xl border-b border-blue-100"
+                                                className="h-full w-full object-cover rounded-t-xl border-b border-blue-100 dark:border-gray-700"
                                             />
                                         ) : (
-                                            <div className="flex h-full w-full items-center justify-center bg-blue-100">
-                                                <span className="text-blue-400">No Image</span>
+                                            <div className="flex h-full w-full items-center justify-center bg-blue-100 dark:bg-[#23232a]">
+                                                <span className="text-blue-400 dark:text-gray-400">No Image</span>
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="flex flex-grow flex-col p-6">
                                         <div className="flex items-center justify-between mb-3">
-                                            <h2 className="line-clamp-2 text-xl leading-tight font-bold text-blue-900">
+                                            <h2 className="line-clamp-2 text-xl leading-tight font-bold text-blue-900 dark:text-blue-200">
                                                 {post.title || 'Untitled'}
                                             </h2>
                                             {post.province && (
-                                                <span className="ml-2 rounded bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 px-2 py-1 text-xs font-semibold text-purple-700 border border-purple-200 shadow-sm">
+                                                <span className="ml-2 rounded bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a] px-2 py-1 text-xs font-semibold text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 shadow-sm">
                                                     {post.province.name_en}
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-blue-700">
+                                        <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-blue-700 dark:text-blue-300">
                                             <div className="flex items-center gap-1.5">
-                                                <Tag className="h-4 w-4 text-blue-500" />
+                                                <Tag className="h-4 w-4 text-blue-500 dark:text-blue-300" />
                                                 <span className="font-medium">{post.category?.name || 'Uncategorized'}</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
-                                                <MessageSquare className="h-4 w-4 text-green-500" />
+                                                <MessageSquare className="h-4 w-4 text-green-500 dark:text-green-300" />
                                                 <span>{post.comments_count || 0} Comments</span>
                                             </div>
                                             <div className="flex items-center gap-1.5">
-                                                <CalendarDays className="h-4 w-4 text-purple-500" />
+                                                <CalendarDays className="h-4 w-4 text-purple-500 dark:text-purple-300" />
                                                 <span>
                                                     {post.created_at
                                                         ? new Date(post.created_at).toLocaleDateString('en-US', {
@@ -336,17 +336,17 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                                 </span>
                                             </div>
                                         </div>
-                                        <p className="mb-4 line-clamp-3 flex-grow text-blue-900/80">
+                                        <p className="mb-4 line-clamp-3 flex-grow text-blue-900/80 dark:text-blue-100/80">
                                             {truncatedContent}
                                             {contentWords.length > 20 && (
-                                                <span className="text-blue-500 font-semibold cursor-pointer ml-1" onClick={e => { e.stopPropagation(); router.visit(route('user.posts.show', post.id)); }}>
+                                                <span className="text-blue-500 dark:text-blue-300 font-semibold cursor-pointer ml-1" onClick={e => { e.stopPropagation(); router.visit(route('user.posts.show', post.id)); }}>
                                                     Read more
                                                 </span>
                                             )}
                                         </p>
                                         <Button
                                             variant="default"
-                                            className="mt-auto w-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-white font-bold shadow-md hover:from-blue-500 hover:to-pink-500 hover:shadow-lg border-none"
+                                            className="mt-auto w-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-white font-bold shadow-md hover:from-blue-500 hover:to-pink-500 hover:shadow-lg border-none dark:bg-gradient-to-r dark:from-blue-700 dark:via-purple-700 dark:to-pink-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 router.visit(route('user.posts.show', post.id));
@@ -360,7 +360,7 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                         })}
                     </div>
                 ) : (
-                    <div className="rounded-lg border bg-gray-50 py-12 text-center text-lg text-gray-500">
+                    <div className="rounded-lg border bg-gray-50 dark:bg-[#23232a] py-12 text-center text-lg text-gray-500 dark:text-gray-300">
                         <p className="mb-2">😔 No posts found matching your criteria.</p>
                         <p>Try adjusting your search or filters.</p>
                     </div>

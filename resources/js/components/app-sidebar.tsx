@@ -4,20 +4,27 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder,PenSquare,FolderPlus, MapPin} from 'lucide-react';
-import AppLogo from './app-logo';
-import {usePage} from '@inertiajs/react';
+import { BookOpen, Folder, PenSquare, FolderPlus, MapPin, Plane } from 'lucide-react';
+
+import { usePage } from '@inertiajs/react';
 
 
 const footerNavItems: NavItem[] = [
    
 ];
 
+type AuthUser = { id: number; name: string; role: 'admin' | 'user' };
+type PageProps = {
+    auth: {
+        user: AuthUser | null;
+    };
+};
+
 export function AppSidebar() {
-    const {auth} = usePage().props;
-    const user = auth.user as{id:number; name:string; role:'admin'|'user'}|null;
+    const { auth } = usePage<PageProps>().props;
+    const user = auth.user;
    
-    const mainNavItems: NavItem[] = user?.role==='admin'? [
+    const mainNavItems: NavItem[] = user?.role === 'admin' ? [
     {
         title: 'Posts',
         href: '/admin/posts',
@@ -33,7 +40,7 @@ export function AppSidebar() {
         href: '/admin/provinces',
         icon: MapPin,
     },
-] : user?.role==='user'? [ 
+] : user?.role === 'user' ? [ 
      {
         title: 'Blogs',
         href: '/user/posts',
@@ -41,7 +48,7 @@ export function AppSidebar() {
     },
     {
         title: 'Hotels',
-        href: '/user/posts?category=Hotel',
+        href: '/user/posts?category=12',
         icon: FolderPlus,
     },
     {
@@ -57,7 +64,7 @@ export function AppSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href="/dashboard" prefetch>
-                                <AppLogo />
+                                <Plane className="w-16 h-16 mx-auto text-blue-500" />
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>

@@ -221,4 +221,66 @@ class UserController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Show dashboard posts for the dashboard page.
+     */
+    public function dashboard()
+    {
+        $posts = Post::with(['category', 'province', 'comments'])
+            ->withCount('comments')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title ?? '',
+                    'content' => $post->content ?? '',
+                    'category' => [
+                        'id' => $post->category->id ?? 0,
+                        'name' => $post->category->name ?? '',
+                    ],
+                    'province' => $post->province ? [
+                        'id' => $post->province->id,
+                        'name_en' => $post->province->name_en,
+                        'name_km' => $post->province->name_km,
+                    ] : null,
+                    'comments_count' => $post->comments_count ?? 0,
+                    'created_at' => $post->created_at?->toISOString(),
+                    'image_url' => $post->image ? asset('storage/' . $post->image) : null,
+                ];
+            });
+
+        $hotelPosts = Post::with(['category', 'province', 'comments'])
+            ->withCount('comments')
+            ->whereHas('category', fn($q) => $q->where('name', 'Hotel'))
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'id' => $post->id,
+                    'title' => $post->title ?? '',
+                    'content' => $post->content ?? '',
+                    'category' => [
+                        'id' => $post->category->id ?? 0,
+                        'name' => $post->category->name ?? '',
+                    ],
+                    'province' => $post->province ? [
+                        'id' => $post->province->id,
+                        'name_en' => $post->province->name_en,
+                        'name_km' => $post->province->name_km,
+                    ] : null,
+                    'comments_count' => $post->comments_count ?? 0,
+                    'created_at' => $post->created_at?->toISOString(),
+                    'image_url' => $post->image ? asset('storage/' . $post->image) : null,
+                ];
+            });
+
+        return Inertia::render('dashboard', [
+            'latestPosts' => $posts,
+            'hotelPosts' => $hotelPosts,
+        ]);
+    }
 }
