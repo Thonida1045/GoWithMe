@@ -187,10 +187,14 @@ export default function CategoriesPage({ categories }: CategoriesPageProps) {
                                         <span key={i} className="px-2 text-blue-700">...</span>
                                     );
                                 }
-                                if (link.url === null) {
+                                // Hide "Previous" and "Next" labels from Laravel pagination
+                                if (link.label === '&laquo; Previous' || link.label === 'Next &raquo;' || link.url === null) {
                                     return null;
                                 }
                                 const page = parseInt(link.label);
+                                if (isNaN(page)) {
+                                    return null;
+                                }
                                 return (
                                     <Button key={i} variant={link.active ? "default" : "outline"} size="sm" onClick={() => handlePageChange(page)} className={`h-8 w-8 p-0 ${link.active ? 'bg-blue-600 text-white' : 'border-blue-400 text-blue-700 hover:bg-blue-100'}`}> 
                                         {link.label}
