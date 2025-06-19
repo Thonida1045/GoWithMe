@@ -62,7 +62,7 @@ class CategoryController extends Controller
     {
         $categories = Category::findOrFail($id);
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories',
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
         ]);
         $categories->update($validated);
         return redirect()->route('admin.categories.index')

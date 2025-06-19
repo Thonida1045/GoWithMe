@@ -30,9 +30,10 @@ Route::prefix('user')-> name('user.')->group(function(){
     Route::get('posts/{id}', [UserController::class, 'show'])-> name ('posts.show');
     Route::post('posts/{id}/comments', [UserController::class, 'storeComment'])-> name('posts.comments.store');
     Route::delete('posts/{postId}/comments/{commentId}',[UserController::class, 'destroyComment'])-> name('posts.comments.destroy');
-Route::get('/aboutme', function () {
-    return Inertia::render('user/aboutme'); // This should match React page in ./pages/AboutMe.tsx
-});
+    Route::get('/aboutme', function () {
+        return Inertia::render('user/aboutme'); // This should match React page in ./pages/AboutMe.tsx
+    });
+    Route::get('hotels', [UserController::class, 'hotels'])->name('hotels.index');
 });
 
 Route::get('/api/posts', function () {

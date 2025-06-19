@@ -25,11 +25,6 @@ class Post extends Model
 
     protected $appends = ['image_url'];
 
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class);
-    }
-
     public function province(): BelongsTo
     {
         return $this->belongsTo(Province::class);
@@ -40,6 +35,12 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    // Remove categories() belongsToMany if reverting to one-to-many
 
     // public function getImageUrlAttribute(): ?string
     // {
@@ -49,7 +50,7 @@ class Post extends Model
     //     return null;
     // }
     public function getImageUrlAttribute()
-{
-    return $this->image ? asset('storage/' . $this->image) : null;
-}
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 }

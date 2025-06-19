@@ -21,18 +21,27 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $query = Post::with(['category', 'province', 'comments'])
-            ->withCount('comments')
-            ->when($request->search, function ($query, $search) {
-                $query->where('title', 'like', "%{$search}%");
-            })
-            ->when($request->filled('category') && $request->category !== 'all', function ($query) use ($request) {
-                $query->where('category_id', $request->category);
-            })
-            ->when($request->sort === 'most_commented', function ($query) {
-                $query->orderBy('comments_count', 'desc');
-            }, function ($query) {
-                $query->latest();
-            });
+            ->withCount('comments');
+
+        // Filtering
+        if ($request->filled('search')) {
+            $query->where('title', 'like', "%{$request->search}%");
+        }
+        if ($request->filled('category') && $request->category !== 'all') {
+            $query->where('category_id', $request->category);
+        }
+        if ($request->filled('province') && $request->province !== '') {
+            $query->where('province_id', $request->province);
+        }
+
+        // Sorting
+        if ($request->sort === 'province') {
+            $query->orderBy('province_id', 'asc');
+        } elseif ($request->sort === 'most_commented') {
+            $query->orderBy('comments_count', 'desc');
+        } else {
+            $query->latest();
+        }
 
         $posts = $query->paginate(9)->through(function ($post) {
             return [
@@ -54,20 +63,12 @@ class UserController extends Controller
             ];
         });
 
-        $categories = Category::all()->map(function ($category) {
-            return [
-                'id' => $category->id,
-                'name' => $category->name,
-            ];
-        });
-
-        $provinces = Province::all()->map(function ($province) {
-            return [
-                'id' => $province->id,
-                'name_en' => $province->name_en,
-                'name_km' => $province->name_km,
-            ];
-        });
+        $categories = Category::all()->map(fn($cat) => ['id' => $cat->id, 'name' => $cat->name]);
+        $provinces = Province::all()->map(fn($prov) => [
+            'id' => $prov->id,
+            'name_en' => $prov->name_en,
+            'name_km' => $prov->name_km,
+        ]);
 
         return Inertia::render('user/posts', [
             'posts' => $posts,
@@ -76,8 +77,9 @@ class UserController extends Controller
             'filters' => array_merge([
                 'search' => '',
                 'category' => 'all',
+                'province' => '',
                 'sort' => 'latest'
-            ], $request->only(['search', 'category', 'sort'])),
+            ], $request->only(['search', 'category', 'province', 'sort'])),
         ]);
     }
 
@@ -161,5 +163,62 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function hotels(Request $request)
+    {
+        $query = Post::with(['category', 'province', 'comments'])
+            ->withCount('comments')
+            ->whereHas('category', function($q) { $q->where('name', 'Hotel'); });
+
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'like', "%{$request->search}%")
+                  ->orWhere('content', 'like', "%{$request->search}%");
+            });
+        }
+        if ($request->filled('province') && $request->province !== '') {
+            $query->where('province_id', $request->province);
+        }
+        if ($request->sort === 'most_commented') {
+            $query->orderBy('comments_count', 'desc');
+        } elseif ($request->sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } else {
+            $query->latest();
+        }
+
+        $posts = $query->paginate(12)->through(function ($post) {
+            return [
+                'id' => $post->id,
+                'title' => $post->title ?? '',
+                'content' => $post->content ?? '',
+                'category' => [
+                    'id' => $post->category->id ?? 0,
+                    'name' => $post->category->name ?? '',
+                ],
+                'province' => $post->province ? [
+                    'id' => $post->province->id,
+                    'name_en' => $post->province->name_en,
+                    'name_km' => $post->province->name_km,
+                ] : null,
+                'comments_count' => $post->comments_count ?? 0,
+                'created_at' => $post->created_at?->toISOString(),
+                'image_url' => $post->image ? asset('storage/' . $post->image) : null,
+            ];
+        });
+
+        $provinces = Province::all(['id', 'name_en', 'name_km']);
+
+        return Inertia::render('user/hotels', [
+            'posts' => $posts,
+            'provinces' => $provinces,
+            'filters' => [
+                'search' => $request->search,
+                'province' => $request->province,
+                'sort' => $request->sort,
+                'category' => 'Hotel', // Always set category to Hotel for the filter
+            ],
+        ]);
     }
 }

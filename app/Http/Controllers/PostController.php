@@ -18,7 +18,7 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Post::query();
+        $query = Post::query()->withCount('comments');
 
         // Search
         if ($request->filled('search')) {
@@ -31,7 +31,7 @@ class PostController extends Controller
         if ($request->input('sort') === 'oldest') {
             $query->orderBy('created_at', 'asc');
         } elseif ($request->input('sort') === 'most_commented') {
-            $query->withCount('comments')->orderBy('comments_count', 'desc');
+            $query->orderBy('comments_count', 'desc');
         } elseif ($request->input('sort') === 'province') {
             $query->orderBy('province_id', 'asc');
         } elseif ($request->input('sort') === 'category') {
@@ -51,7 +51,7 @@ class PostController extends Controller
         }
 
         // Use the query with eager loading for category, province, and comments.user
-        $posts = $query->with(['category', 'province', 'comments.user'])->paginate(10);
+        $posts = $query->with(['category', 'province', 'comments.user'])->paginate(8);
         $categories = Category::all();
         $provinces = \App\Models\Province::all();
 
@@ -89,7 +89,7 @@ class PostController extends Controller
             $query->orderBy('published_at', 'desc');
         }
 
-        $posts = $query->with(['category'])->withCount('comments')->paginate(10);
+        $posts = $query->with(['category'])->withCount('comments')->paginate(8); // Changed from 10 to 8
 
         // Add image_url attribute
         $posts->getCollection()->transform(function ($post) {
@@ -173,7 +173,7 @@ class PostController extends Controller
      */
     public function edit(string $id)
 {
-    $post = Post::with(['category', 'province'])->findOrFail($id);
+    $post = Post::with(['category', 'province'])->withCount('comments')->findOrFail($id);
     $categories = Category::all();
     $provinces = Province::all();
 

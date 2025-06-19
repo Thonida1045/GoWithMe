@@ -1,13 +1,12 @@
-import { Button } from '@/components/ui/button'; // Adjust path for Shadcn UI components
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import AppLayout from '@/layouts/app-layout'; // Adjust this path if your main layout is different
-import { type BreadcrumbItem } from '@/types'; // Adjust path based on your types definition
+import AppLayout from '@/layouts/app-layout';
+import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
-import { CalendarDays, MessageSquare, Tag } from 'lucide-react'; // Icons
-import { useEffect, useState } from 'react';
-import { Toaster } from 'sonner'; // For notifications
+import { CalendarDays, MessageSquare, Tag } from 'lucide-react';
+import { useState } from 'react';
+import { Toaster } from 'sonner';
 
-// --- TypeScript Interfaces ---
 interface Post {
     id: number;
     title: string;
@@ -23,12 +22,7 @@ interface Post {
     };
     comments_count: number;
     created_at: string;
-    image_url: string | null; // This is the full image URL from your Laravel model
-}
-
-interface Category {
-    id: number;
-    name: string;
+    image_url: string | null;
 }
 
 interface Province {
@@ -51,19 +45,17 @@ interface PaginatedData {
     provinces?: Province[];
 }
 
-interface PostsPageProps {
+interface HotelsPageProps {
     posts: PaginatedData;
-    categories: Category[];
-    provinces: Province[]; // <-- Add this line
+    provinces: Province[];
     filters?: {
         search?: string;
-        category?: string;
         sort?: string;
         province?: string;
+        category?: string; // Added category to filters type
     };
 }
 
-// --- Default Props for safer rendering ---
 const defaultPosts: PaginatedData = {
     data: [],
     current_page: 1,
@@ -75,208 +67,146 @@ const defaultPosts: PaginatedData = {
 
 const defaultFilters = {
     search: '',
-    category: '',
     sort: '',
     province: '',
+    category: 'Hotel', // Set default category to Hotel
 };
 
-// --- Breadcrumbs for navigation ---
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Posts',
-        href: route('user.posts.index'), // Matches the route in web.php
+        title: 'Hotels',
+        href: route('user.hotels.index'),
     },
 ];
 
-export default function PostsPage({ posts = defaultPosts, categories = [], provinces = [], filters = defaultFilters }: PostsPageProps) {
-    // --- State for filters ---
+export default function HotelsPage({ posts = defaultPosts, provinces = [], filters = defaultFilters }: HotelsPageProps) {
     const [search, setSearch] = useState(filters?.search ?? '');
-    const [selectedCategory, setSelectedCategory] = useState(filters?.category ?? 'all');
     const [sortBy, setSortBy] = useState(filters?.sort ?? 'latest');
+    // Remove category state, always use 'Hotel' in params
 
-    // Helper to construct query parameters for Inertia visits
     const getRouterParams = (newPage?: number) => ({
         page: newPage || posts.current_page,
         search: search,
-        category: selectedCategory === 'all' ? '' : selectedCategory,
         sort: sortBy,
+        province: filters?.province || '',
+        category: 'Hotel', // Always send category as 'Hotel'
     });
 
-    // --- Handlers for filter changes ---
     const handleSearch = (value: string) => {
         setSearch(value);
         router.get(
-            route('user.posts.index'),
-            { ...getRouterParams(), search: value }, // Update search param
+            route('user.hotels.index'),
+            { ...getRouterParams(), search: value },
             { preserveState: true, preserveScroll: true },
-        );
-    };
-
-    const handleCategoryChange = (value: string) => {
-        setSelectedCategory(value);
-        router.get(
-            route('user.posts.index'),
-            { ...getRouterParams(), category: value === 'all' ? '' : value }, // Update category param
-            { preserveState: true, preserveScroll: true, replace: true },
         );
     };
 
     const handleSortChange = (value: string) => {
         setSortBy(value);
         router.get(
-            route('user.posts.index'),
-            { ...getRouterParams(), sort: value }, // Update sort param
+            route('user.hotels.index'),
+            { ...getRouterParams(), sort: value },
             { preserveState: true, preserveScroll: true },
         );
     };
 
-    // --- Handler for pagination changes ---
+    const handleProvinceChange = (value: string) => {
+        router.get(
+            route('user.hotels.index'),
+            { ...getRouterParams(), province: value },
+            { preserveState: true, preserveScroll: true, replace: true }
+        );
+    };
+
     const handlePageChange = (page: number) => {
         router.get(
-            route('user.posts.index'),
-            { ...getRouterParams(), page: page }, // Update page param
+            route('user.hotels.index'),
+            { ...getRouterParams(), page: page },
             { preserveState: true, preserveScroll: true },
         );
     };
-
-    // Debug: Log the first post to check image_url
-    useEffect(() => {
-        if (posts.data.length > 0) {
-            console.log('First post object:', posts.data[0]);
-        }
-        // Log provinces for debugging Select.Item error
-        if (provinces && provinces.length > 0) {
-            console.log('Provinces for Select:', provinces);
-        }
-        
-    }, [posts.data, provinces]);
-
-    // Fetch posts data from API
-    // useEffect(() => {
-    //     fetch('/api/posts')
-    //         .then((res) => res.json())
-    //         .then((data) => setPosts(data));
-    // }, []);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Posts" />
+            <Head title="Hotels" />
             <Toaster richColors closeButton position="top-right" />
             <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8">
-                {' '}
-                {/* Adjusted padding and gap */}
-                
-                <div className="mb-6 flex flex-wrap items-end gap-4 w-full">
-                    <h3 className="text-xl font-bold tracking-tight text-gray-900 mb-0 mr-6 whitespace-nowrap">
-                        Blog Posts
-                    </h3>
-                    {/* Filters Section */}
-                    <div className="flex flex-wrap items-end gap-4 flex-1">
-                        {/* Search */}
-                        <div className="max-w-md min-w-[200px] flex-1">
-                            <label htmlFor="search-posts" className="sr-only">
-                                Search Posts
-                            </label>
-                            <Input
-                                id="search-posts"
-                                type="text"
-                                placeholder="Search posts by title or content..."
-                                value={search}
-                                onChange={(e) => handleSearch(e.target.value)}
-                                className="w-full"
-                            />
-                        </div>
-                        {/* Category filter (native select) */}
-                        <div>
-                            <label htmlFor="category-select" className="sr-only">
-                                Filter by Category
-                            </label>
-                            <select
-                                id="category-select"
-                                value={selectedCategory}
-                                onChange={e => handleCategoryChange(e.target.value)}
-                                className="border rounded px-3 py-2 w-[180px]"
-                            >
-                                <option value="all">All Categories</option>
-                                {categories.map((category) => (
-                                    <option key={category.id} value={category.id.toString()}>
-                                        {category.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        {/* Province filter (native select) */}
-                        <div>
-                            <label htmlFor="province-select" className="sr-only">
-                                Filter by Province
-                            </label>
-                            <select
-                                id="province-select"
-                                value={(() => {
-                                    const validProvinceIds = provinces.map(p => p.id.toString());
-                                    return typeof filters?.province === 'string' && (filters.province === '' || validProvinceIds.includes(filters.province))
-                                        ? filters.province
-                                        : '';
-                                })()}
-                                onChange={e => {
-                                    router.get(
-                                        route('user.posts.index'),
-                                        { ...getRouterParams(), province: e.target.value },
-                                        { preserveState: true, preserveScroll: true, replace: true }
-                                    );
-                                }}
-                                className="border rounded px-3 py-2 w-[180px]"
-                            >
-                                <option value="">All Provinces</option>
-                                {provinces
-                                    .filter(
-                                        (province) =>
-                                            province &&
-                                            typeof province.id === 'number' &&
-                                            province.id > 0 &&
-                                            typeof province.name_en === 'string' &&
-                                            province.name_en.trim() !== ''
-                                    )
-                                    .map((province: Province) => (
-                                        <option key={province.id} value={province.id.toString()}>
-                                            {province.name_en}
-                                        </option>
-                                    ))}
-                            </select>
-                        </div>
-                        {/* Sort filter (native select) */}
-                        <div>
-                            <label htmlFor="sort-select" className="sr-only">
-                                Sort by
-                            </label>
-                            <select
-                                id="sort-select"
-                                value={sortBy}
-                                onChange={e => handleSortChange(e.target.value)}
-                                className="border rounded px-3 py-2 w-[180px]"
-                            >
-                                <option value="latest">Latest</option>
-                                <option value="most_commented">Most Commented</option>
-                                <option value="oldest">Oldest</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
                 <div className="mb-4 flex flex-col items-start w-full overflow-hidden">
+                    <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 w-full mb-2">
+                        Hotels
+                    </h1>
                     <img
-                        src={"/storage/board/Board.gif"}
-                        alt="Board"
+                        src={"/storage/board/Hotel.gif"}
+                        alt="Hotel Board"
                         className="block w-full max-w-full h-[60vh] object-contain rounded shadow-lg border border-blue-200 bg-white"
                         style={{ marginTop: '0.5rem', width: '100%', maxWidth: '100%', height: '60vh' }}
                     />
                 </div>
-                {/* Posts Grid Display */}
-                {Array.isArray(posts.data) && posts.data.length > 0 ? (
+                {/* Filters Section */}
+                <div className="mb-6 flex flex-wrap items-end gap-4">
+                    {/* Search */}
+                    <div className="max-w-md min-w-[200px] flex-1">
+                        <label htmlFor="search-hotels" className="sr-only">
+                            Search Hotels
+                        </label>
+                        <Input
+                            id="search-hotels"
+                            type="text"
+                            placeholder="Search hotels by title or content..."
+                            value={search}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            className="w-full"
+                        />
+                    </div>
+                    {/* Province filter (native select) */}
+                    <div>
+                        <label htmlFor="province-select" className="sr-only">
+                            Filter by Province
+                        </label>
+                        <select
+                            id="province-select"
+                            value={filters?.province || ''}
+                            onChange={e => handleProvinceChange(e.target.value)}
+                            className="border rounded px-3 py-2 w-[180px]"
+                        >
+                            <option value="">All Provinces</option>
+                            {provinces
+                                .filter(
+                                    (province) =>
+                                        province &&
+                                        typeof province.id === 'number' &&
+                                        province.id > 0 &&
+                                        typeof province.name_en === 'string' &&
+                                        province.name_en.trim() !== ''
+                                )
+                                .map((province: Province) => (
+                                    <option key={province.id} value={province.id.toString()}>
+                                        {province.name_en}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                    {/* Sort filter (native select) */}
+                    <div>
+                        <label htmlFor="sort-select" className="sr-only">
+                            Sort by
+                        </label>
+                        <select
+                            id="sort-select"
+                            value={sortBy}
+                            onChange={e => handleSortChange(e.target.value)}
+                            className="border rounded px-3 py-2 w-[180px]"
+                        >
+                            <option value="latest">Latest</option>
+                            <option value="most_commented">Most Commented</option>
+                            <option value="oldest">Oldest</option>
+                        </select>
+                    </div>
+                </div>
+                {/* Hotels Grid Display */}
+                {posts.data.length > 0 ? (
                     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {' '}
-                        {/* Increased gap, added xl column */}
                         {posts.data.map((post) => {
-                            // Truncate content to 20 words
                             const contentWords = post.content ? post.content.split(/\s+/) : [];
                             const truncatedContent = contentWords.length > 20
                                 ? contentWords.slice(0, 20).join(' ') + '...'
@@ -288,12 +218,11 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                     style={{ minHeight: 420, height: '100%' }}
                                     onClick={() => router.visit(route('user.posts.show', post.id))}
                                 >
-                                    {/* IMAGE SECTION: This comes first */}
                                     <div className="relative aspect-video w-full bg-gradient-to-tr from-blue-200 via-purple-100 to-pink-100">
                                         {post.image_url ? (
                                             <img
                                                 src={post.image_url}
-                                                alt={post.title || 'Post Image'}
+                                                alt={post.title || 'Hotel Image'}
                                                 className="h-full w-full object-cover rounded-t-xl border-b border-blue-100"
                                             />
                                         ) : (
@@ -302,7 +231,6 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                             </div>
                                         )}
                                     </div>
-
                                     <div className="flex flex-grow flex-col p-6">
                                         <div className="flex items-center justify-between mb-3">
                                             <h2 className="line-clamp-2 text-xl leading-tight font-bold text-blue-900">
@@ -361,12 +289,12 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                     </div>
                 ) : (
                     <div className="rounded-lg border bg-gray-50 py-12 text-center text-lg text-gray-500">
-                        <p className="mb-2">😔 No posts found matching your criteria.</p>
+                        <p className="mb-2">😔 No hotels found matching your criteria.</p>
                         <p>Try adjusting your search or filters.</p>
                     </div>
                 )}
                 {/* Pagination Controls */}
-                {posts.links.length > 3 && ( // Only show pagination if there are actual links beyond prev/next
+                {posts.links.length > 3 && (
                     <div className="mt-8 flex justify-center">
                         <nav className="flex items-center space-x-2">
                             <Button
@@ -378,15 +306,12 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                             >
                                 Previous
                             </Button>
-
                             <div className="flex items-center space-x-1">
                                 {Array.isArray(posts.links) &&
                                     posts.links.map((link, i) => {
-                                        // Filter out default "Previous" and "Next" labels from Laravel pagination links
                                         if (!link || link.label === '&laquo; Previous' || link.label === 'Next &raquo;') {
                                             return null;
                                         }
-
                                         if (link.label === '...') {
                                             return (
                                                 <span key={i} className="px-2">
@@ -394,14 +319,10 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                                 </span>
                                             );
                                         }
-
-                                        // Ensure link.url exists and label is a number for page buttons
                                         if (!link.url || isNaN(parseInt(link.label))) {
                                             return null;
                                         }
-
                                         const page = parseInt(link.label);
-
                                         return (
                                             <Button
                                                 key={i}
@@ -415,7 +336,6 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                         );
                                     })}
                             </div>
-
                             <Button
                                 variant="outline"
                                 size="sm"
@@ -432,4 +352,3 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
         </AppLayout>
     );
 }
-

@@ -138,90 +138,97 @@ export default function CategoriesPage({ categories }: CategoriesPageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Categories" />
             <Toaster richColors closeButton position="top-right" />
-            <div className="flex flex-col gap-4 p-4">
+            <div className="flex flex-col gap-4 p-4 min-h-screen bg-blue-50">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Categories</h1>                <Button onClick={handleAdd}>
+                    <h1 className="text-2xl font-bold text-blue-700">Categories</h1>
+                    <Button className="bg-blue-600 text-white hover:bg-blue-700" onClick={handleAdd}>
                         Add Category
-                    </Button>            </div>
-                <div className="rounded-md border">
+                    </Button>
+                </div>
+                <div className="rounded border bg-white">
                     <Table>
                         <TableHeader>
-                            <TableRow>
-                                <TableHead>Name</TableHead>                            <TableHead>Posts Count</TableHead>                            <TableHead>Actions</TableHead>                        </TableRow>                    </TableHeader>                    <TableBody>
-                            {categories.data.map((category) => (
-                                <TableRow key={category.id}>
-                                    <TableCell>{category.name}</TableCell>                                <TableCell>{category.posts_count}</TableCell>                                <TableCell>
+                            <TableRow className="bg-blue-100">
+                                <TableHead className="text-blue-700">Name</TableHead>
+                                <TableHead className="text-blue-700">Posts Count</TableHead>
+                                <TableHead className="text-blue-700">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {categories.data.map((category, idx) => (
+                                <TableRow key={category.id} className={idx % 2 === 0 ? "bg-white" : "bg-blue-50"}>
+                                    <TableCell className="text-blue-900">{category.name}</TableCell>
+                                    <TableCell className="text-blue-900">{category.posts_count}</TableCell>
+                                    <TableCell>
                                         <div className="flex gap-2">
-                                            <Button variant="outline"
-                                                size="sm"
-                                                onClick={() => handleEdit(category)}
-                                            >
-                                              Edit                                       </Button>
-                                            <Button variant="destructive"
-                                                size="sm"
-                                                onClick={() => handleDelete(category.id)}
-                                            >
-                                                Delete                                        </Button>                                    </div>                                </TableCell>                            </TableRow>))}
-                        </TableBody>                </Table>            </div>
+                                            <Button variant="outline" size="sm" className="border-blue-400 text-blue-700 hover:bg-blue-100" onClick={() => handleEdit(category)}>
+                                                Edit
+                                            </Button>
+                                            <Button variant="destructive" size="sm" className="bg-red-500 text-white hover:bg-red-600 border-none" onClick={() => handleDelete(category.id)}>
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
                 {/* Pagination */}
                 <div className="flex justify-start mt-4">
                     <nav className="flex items-center space-x-2">
-                        <Button variant="outline"
-                            size="sm"
-                            onClick={() => handlePageChange(categories.current_page - 1)}
-                            disabled={categories.current_page === 1}
-                            className="h-8 px-2"
-                        >
-                             Previous                     </Button>
+                        <Button variant="outline" size="sm" onClick={() => handlePageChange(categories.current_page - 1)} disabled={categories.current_page === 1} className="h-8 px-2 border-blue-400 text-blue-700 hover:bg-blue-100">
+                            Previous
+                        </Button>
                         <div className="flex items-center space-x-1">
                             {categories.links.map((link, i) => {
                                 if (link.label === '...') {
                                     return (
-                                        <span key={i} className="px-2">...</span>);
+                                        <span key={i} className="px-2 text-blue-700">...</span>
+                                    );
                                 }
-
                                 if (link.url === null) {
                                     return null;
                                 }
-
                                 const page = parseInt(link.label);
                                 return (
-                                    <Button key={i}
-                                        variant={link.active ? "default" : "outline"}
-                                        size="sm"
-                                        onClick={() => handlePageChange(page)}
-                                        className="h-8 w-8 p-0"
-                                    >
+                                    <Button key={i} variant={link.active ? "default" : "outline"} size="sm" onClick={() => handlePageChange(page)} className={`h-8 w-8 p-0 ${link.active ? 'bg-blue-600 text-white' : 'border-blue-400 text-blue-700 hover:bg-blue-100'}`}> 
                                         {link.label}
-                                    </Button>);
+                                    </Button>
+                                );
                             })}
                         </div>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handlePageChange(categories.current_page + 1)}
-                            disabled={categories.current_page === categories.last_page}
-                            className="h-8 px-2"
-                        >
-                            Next                     </Button>                </nav>            </div>
+                        <Button variant="outline" size="sm" onClick={() => handlePageChange(categories.current_page + 1)} disabled={categories.current_page === categories.last_page} className="h-8 px-2 border-blue-400 text-blue-700 hover:bg-blue-100">
+                            Next
+                        </Button>
+                    </nav>
+                </div>
                 {/* Add/Edit Category Modal */}
                 <Dialog open={showModal} onOpenChange={setShowModal}>
-                    <DialogContent className="sm:max-w-[425px]">
+                    <DialogContent className="sm:max-w-[425px] bg-white border border-blue-200 rounded shadow">
                         <DialogHeader>
-                            <DialogTitle>{editCategory ? 'Edit Category' : 'Add Category'}</DialogTitle>                        <DialogDescription>
+                            <DialogTitle className="text-blue-700">{editCategory ? 'Edit Category' : 'Add Category'}</DialogTitle>
+                            <DialogDescription className="text-blue-500">
                                 {editCategory ? 'Make changes to your category here.' : 'Create a new category here.'}
-                            </DialogDescription>                    </DialogHeader>                    <form onSubmit={handleSubmit} className="space-y-4">
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>                            <Input id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleInputChange}
-                                    required />
+                                <Label htmlFor="name" className="text-blue-700">Name</Label>
+                                <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required className="border-blue-300 focus:border-blue-500" />
                             </div>
                             <DialogFooter>
-                                <Button type="button" variant="outline" onClick={() => setShowModal(false)}>
-                                    Cancel                             </Button>                            <Button type="submit">
+                                <Button type="button" variant="outline" className="hover:bg-blue-100 text-blue-700 border-blue-400" onClick={() => setShowModal(false)}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
                                     {editCategory ? 'Update' : 'Create'}
-                                </Button>                        </DialogFooter>                    </form>                </DialogContent>            </Dialog>        </div>    </AppLayout>);
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
+            </div>
+        </AppLayout>
+    );
 }
- 

@@ -1,5 +1,11 @@
 import React from 'react';
-import Hero from '@/components/Hero.jpg';
+import Conclusion from '@/components/assets/conclusion.webp';
+import Methodology from '@/components/assets/methodology.jpg';
+import PrblemStatement from '@/components/assets/problem statement.jpg';
+import ProjectScope from '@/components/assets/project scopt.jpg';
+import Hero from '@/components/assets/Hero.jpg';
+import Introduction from '@/components/assets/introduction.png';
+import style from '@/components/assets/style.png'
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 
@@ -17,15 +23,12 @@ function AboutMe() {
       <section className="text-center">
         <h1 className="text-3xl md:text-5xl font-bold mb-4">Your Journey Begins Here</h1>
         <p className="text-lg max-w-xl mx-auto">Discover the wonders of Cambodia through our beautifully crafted tourism platform.</p>
-          <img src="Hero" alt="placeholder"
-
-          className="rounded-xl mx-auto mt-6 shadow-md"
-        />
+          <img src={Hero} alt="Hero" className="rounded-xl mx-auto mt-6 shadow-md" />
       </section>
 
       {/* Introduction */}
       <section className="grid md:grid-cols-2 gap-8 items-center">
-        <img src={Hero}  alt="Introduction" className="rounded-lg shadow-md" />
+        <img src={Introduction}  alt="Introduction" className="rounded-lg shadow-md" />
         <div>
           <h2 className="text-2xl font-bold mb-2">🌍 Introduction</h2>
           <p>
@@ -42,12 +45,12 @@ function AboutMe() {
             Tourists face difficulties in finding trusted travel information, especially for local or lesser-known destinations. Our platform solves this by providing a reliable and curated resource.
           </p>
         </div>
-        <img src={Hero}  alt="Problem" className="rounded-lg shadow-md" />
+        <img src={PrblemStatement}  alt="Problem" className="rounded-lg shadow-md" />
       </section>
 
       {/* Project Scope */}
       <section className="grid md:grid-cols-2 gap-8 items-center">
-        <img src={Hero}  alt="Scope" className="rounded-lg shadow-md" />
+        <img src={ProjectScope}  alt="Scope" className="rounded-lg shadow-md" />
         <div>
           <h2 className="text-2xl font-bold mb-2">📌 Project Scope</h2>
           <ul className="list-disc pl-6 space-y-2">
@@ -70,12 +73,12 @@ function AboutMe() {
             <li>Testing and deployment</li>
           </ol>
         </div>
-        <img src={Hero}  alt="Methodology" className="rounded-lg shadow-md" />
+        <img src={Methodology}  alt="Methodology" className="rounded-lg shadow-md" />
       </section>
 
       {/* Architecture */}
       <section className="grid md:grid-cols-2 gap-8 items-center">
-        <img src={Hero}  alt="Architecture" className="rounded-lg shadow-md" />
+        <img src={style}  alt="Architecture" className="rounded-lg shadow-md" />
         <div>
           <h2 className="text-2xl font-bold mb-2">🧩 System Architecture / Design</h2>
           <p>
@@ -92,7 +95,7 @@ function AboutMe() {
             This website is the first step in promoting digital tourism. Future updates will include booking systems, personalized recommendations, and mobile app support.
           </p>
         </div>
-        <img src={Hero}  alt="Future" className="rounded-lg shadow-md" />
+        <img src={Conclusion}  alt="Future" className="rounded-lg shadow-md" />
       </section>
     </div>
     </AppLayout>
