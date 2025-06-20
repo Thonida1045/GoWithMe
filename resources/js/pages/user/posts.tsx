@@ -3,11 +3,13 @@ import { Input } from '@/components/ui/input';
 import AppLayout from '@/layouts/app-layout'; // Adjust this path if your main layout is different
 import { type BreadcrumbItem } from '@/types'; // Adjust path based on your types definition
 import { Head, router } from '@inertiajs/react';
-import { CalendarDays, MessageSquare, Tag } from 'lucide-react'; // Icons
-import { useEffect, useState } from 'react';
-import { Toaster } from 'sonner'; // For notifications
+  import { CalendarDays, MessageSquare, Tag } from 'lucide-react'; // Icons
+  import { useEffect, useState } from 'react';
+  import Board from "/storage/app/public/board/Board.gif";
+  import { Toaster } from 'sonner'; // For notifications
 
-// --- TypeScript Interfaces ---
+  
+  // --- TypeScript Interfaces ---
 interface Post {
     id: number;
     title: string;
@@ -148,7 +150,6 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
         if (provinces && provinces.length > 0) {
             console.log('Provinces for Select:', provinces);
         }
-        
     }, [posts.data, provinces]);
 
     // Fetch posts data from API
@@ -162,16 +163,13 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Posts" />
             <Toaster richColors closeButton position="top-right" theme="system" />
-            <div className="flex flex-col gap-6 p-4 md:p-6 lg:p-8 bg-white dark:bg-[#18181b] transition-colors duration-300 min-h-screen">
+            <div className="flex min-h-screen flex-col gap-6 bg-white p-4 transition-colors duration-300 md:p-6 lg:p-8 dark:bg-[#18181b]">
                 {' '}
                 {/* Adjusted padding and gap */}
-                
-                <div className="mb-6 flex flex-wrap items-end gap-4 w-full">
-                    <h3 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mb-0 mr-6 whitespace-nowrap">
-                        Blog Posts
-                    </h3>
+                <div className="mb-6 flex w-full flex-wrap items-end gap-4">
+                    <h3 className="mr-6 mb-0 text-xl font-bold tracking-tight whitespace-nowrap text-gray-900 dark:text-gray-100">Blog Posts</h3>
                     {/* Filters Section */}
-                    <div className="flex flex-wrap items-end gap-4 flex-1">
+                    <div className="flex flex-1 flex-wrap items-end gap-4">
                         {/* Search */}
                         <div className="max-w-md min-w-[200px] flex-1">
                             <label htmlFor="search-posts" className="sr-only">
@@ -194,8 +192,8 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                             <select
                                 id="category-select"
                                 value={selectedCategory}
-                                onChange={e => handleCategoryChange(e.target.value)}
-                                className="border rounded px-3 py-2 w-[180px]"
+                                onChange={(e) => handleCategoryChange(e.target.value)}
+                                className="w-[180px] rounded border px-3 py-2"
                             >
                                 <option value="all">All Categories</option>
                                 {categories.map((category) => (
@@ -213,19 +211,20 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                             <select
                                 id="province-select"
                                 value={(() => {
-                                    const validProvinceIds = provinces.map(p => p.id.toString());
-                                    return typeof filters?.province === 'string' && (filters.province === '' || validProvinceIds.includes(filters.province))
+                                    const validProvinceIds = provinces.map((p) => p.id.toString());
+                                    return typeof filters?.province === 'string' &&
+                                        (filters.province === '' || validProvinceIds.includes(filters.province))
                                         ? filters.province
                                         : '';
                                 })()}
-                                onChange={e => {
+                                onChange={(e) => {
                                     router.get(
                                         route('user.posts.index'),
                                         { ...getRouterParams(), province: e.target.value },
-                                        { preserveState: true, preserveScroll: true, replace: true }
+                                        { preserveState: true, preserveScroll: true, replace: true },
                                     );
                                 }}
-                                className="border rounded px-3 py-2 w-[180px]"
+                                className="w-[180px] rounded border px-3 py-2"
                             >
                                 <option value="">All Provinces</option>
                                 {provinces
@@ -235,7 +234,7 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                             typeof province.id === 'number' &&
                                             province.id > 0 &&
                                             typeof province.name_en === 'string' &&
-                                            province.name_en.trim() !== ''
+                                            province.name_en.trim() !== '',
                                     )
                                     .map((province: Province) => (
                                         <option key={province.id} value={province.id.toString()}>
@@ -252,8 +251,8 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                             <select
                                 id="sort-select"
                                 value={sortBy}
-                                onChange={e => handleSortChange(e.target.value)}
-                                className="border rounded px-3 py-2 w-[180px]"
+                                onChange={(e) => handleSortChange(e.target.value)}
+                                className="w-[180px] rounded border px-3 py-2"
                             >
                                 <option value="latest">Latest</option>
                                 <option value="most_commented">Most Commented</option>
@@ -262,11 +261,11 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                         </div>
                     </div>
                 </div>
-                <div className="mb-4 flex flex-col items-start w-full overflow-hidden">
+                <div className="mb-4 flex w-full flex-col items-start overflow-hidden">
                     <img
-                        src={"/storage/board/Board.gif"}
+                        src={Board}
                         alt="Board"
-                        className="block w-full max-w-full h-[60vh] object-contain rounded shadow-lg border border-blue-200 bg-white dark:bg-[#23232a] dark:border-gray-700"
+                        className="block h-[60vh] w-full max-w-full rounded border border-blue-200 bg-white object-contain shadow-lg dark:border-gray-700 dark:bg-[#23232a]"
                         style={{ marginTop: '0.5rem', width: '100%', maxWidth: '100%', height: '60vh' }}
                     />
                 </div>
@@ -278,13 +277,11 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                         {posts.data.map((post) => {
                             // Truncate content to 20 words
                             const contentWords = post.content ? post.content.split(/\s+/) : [];
-                            const truncatedContent = contentWords.length > 20
-                                ? contentWords.slice(0, 20).join(' ') + '...'
-                                : post.content;
+                            const truncatedContent = contentWords.length > 20 ? contentWords.slice(0, 20).join(' ') + '...' : post.content;
                             return (
                                 <div
                                     key={post.id}
-                                    className="flex cursor-pointer flex-col overflow-hidden rounded-xl border border-blue-200 dark:border-gray-700 bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a] shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] min-h-[420px] h-full"
+                                    className="flex h-full min-h-[420px] cursor-pointer flex-col overflow-hidden rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-purple-100 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl dark:border-gray-700 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a]"
                                     style={{ minHeight: 420, height: '100%' }}
                                     onClick={() => router.visit(route('user.posts.show', post.id))}
                                 >
@@ -294,7 +291,7 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                             <img
                                                 src={post.image_url}
                                                 alt={post.title || 'Post Image'}
-                                                className="h-full w-full object-cover rounded-t-xl border-b border-blue-100 dark:border-gray-700"
+                                                className="h-full w-full rounded-t-xl border-b border-blue-100 object-cover dark:border-gray-700"
                                             />
                                         ) : (
                                             <div className="flex h-full w-full items-center justify-center bg-blue-100 dark:bg-[#23232a]">
@@ -304,12 +301,12 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                     </div>
 
                                     <div className="flex flex-grow flex-col p-6">
-                                        <div className="flex items-center justify-between mb-3">
+                                        <div className="mb-3 flex items-center justify-between">
                                             <h2 className="line-clamp-2 text-xl leading-tight font-bold text-blue-900 dark:text-blue-200">
                                                 {post.title || 'Untitled'}
                                             </h2>
                                             {post.province && (
-                                                <span className="ml-2 rounded bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a] px-2 py-1 text-xs font-semibold text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800 shadow-sm">
+                                                <span className="ml-2 rounded border border-purple-200 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 px-2 py-1 text-xs font-semibold text-purple-700 shadow-sm dark:border-purple-800 dark:from-[#23232a] dark:via-[#18181b] dark:to-[#23232a] dark:text-purple-300">
                                                     {post.province.name_en}
                                                 </span>
                                             )}
@@ -339,14 +336,20 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                                         <p className="mb-4 line-clamp-3 flex-grow text-blue-900/80 dark:text-blue-100/80">
                                             {truncatedContent}
                                             {contentWords.length > 20 && (
-                                                <span className="text-blue-500 dark:text-blue-300 font-semibold cursor-pointer ml-1" onClick={e => { e.stopPropagation(); router.visit(route('user.posts.show', post.id)); }}>
+                                                <span
+                                                    className="ml-1 cursor-pointer font-semibold text-blue-500 dark:text-blue-300"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        router.visit(route('user.posts.show', post.id));
+                                                    }}
+                                                >
                                                     Read more
                                                 </span>
                                             )}
                                         </p>
                                         <Button
                                             variant="default"
-                                            className="mt-auto w-full bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 text-white font-bold shadow-md hover:from-blue-500 hover:to-pink-500 hover:shadow-lg border-none dark:bg-gradient-to-r dark:from-blue-700 dark:via-purple-700 dark:to-pink-700"
+                                            className="mt-auto w-full border-none bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 font-bold text-white shadow-md hover:from-blue-500 hover:to-pink-500 hover:shadow-lg dark:bg-gradient-to-r dark:from-blue-700 dark:via-purple-700 dark:to-pink-700"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 router.visit(route('user.posts.show', post.id));
@@ -360,7 +363,7 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
                         })}
                     </div>
                 ) : (
-                    <div className="rounded-lg border bg-gray-50 dark:bg-[#23232a] py-12 text-center text-lg text-gray-500 dark:text-gray-300">
+                    <div className="rounded-lg border bg-gray-50 py-12 text-center text-lg text-gray-500 dark:bg-[#23232a] dark:text-gray-300">
                         <p className="mb-2">😔 No posts found matching your criteria.</p>
                         <p>Try adjusting your search or filters.</p>
                     </div>
@@ -432,4 +435,3 @@ export default function PostsPage({ posts = defaultPosts, categories = [], provi
         </AppLayout>
     );
 }
-

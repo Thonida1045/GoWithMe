@@ -314,13 +314,13 @@ export default function AdminPostsPage(props: AdminPostsPageProps) {
                         <table className="min-w-full border border-gray-200 bg-white rounded-lg shadow-lg overflow-hidden">
                             <thead className="bg-gradient-to-r from-blue-200 via-pink-200 to-yellow-200">
                                 <tr>
-                                    <th className="border px-4 py-2 text-left text-blue-700">Image</th>
-                                    <th className="border px-4 py-2 text-left text-pink-700">Title</th>
-                                    <th className="border px-4 py-2 text-left text-yellow-700">Category</th>
-                                    <th className="border px-4 py-2 text-left text-blue-700">Province</th>
-                                    <th className="border px-4 py-2 text-center text-pink-700">Comments</th>
-                                    <th className="border px-4 py-2 text-left text-yellow-700">Created At</th>
-                                    <th className="border px-4 py-2 text-center text-blue-700">Actions</th>
+                                    <th className="border px-4 py-2 text-left">Image</th>
+                                    <th className="border px-4 py-2 text-left">Title</th>
+                                    <th className="border px-4 py-2 text-left">Category</th>
+                                    <th className="border px-4 py-2 text-left">Province</th>
+                                    <th className="border px-4 py-2 text-center">Comments</th>
+                                    <th className="border px-4 py-2 text-left">Created At</th>
+                                    <th className="border px-4 py-2 text-center ">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -337,15 +337,15 @@ export default function AdminPostsPage(props: AdminPostsPageProps) {
                                                 <span className="text-gray-400">No Image</span>
                                             )}
                                         </td>
-                                        <td className="max-w-xs truncate border px-4 py-2 font-semibold text-pink-700">{post.title || 'Untitled'}</td>
+                                        <td className="max-w-xs truncate border px-4 py-2 font-semibold  ">{post.title || 'Untitled'}</td>
                                         <td className="border px-4 py-2">
                                             <span className="inline-block px-2 py-1 rounded-full bg-yellow-200 text-yellow-800 text-xs font-bold shadow">{post.category?.name || 'Uncategorized'}</span>
                                         </td>
                                         <td className="border px-4 py-2">
                                             <span className="inline-block px-2 py-1 rounded-full bg-blue-200 text-blue-800 text-xs font-bold shadow">{post.province?.name_en || 'No Province'}</span>
                                         </td>
-                                        <td className="border px-4 py-2 text-center text-pink-700 font-bold">{post.comments_count || 0}</td>
-                                        <td className="border px-4 py-2 text-yellow-700">
+                                        <td className="border px-4 py-2 text-center  font-bold">{post.comments_count || 0}</td>
+                                        <td className="border px-4 py-2 ">
                                             {post.created_at ? new Date(post.created_at).toLocaleDateString() : 'N/A'}
                                         </td>
                                         <td className="space-x-1 border px-4 py-2 text-center">
@@ -417,12 +417,12 @@ export default function AdminPostsPage(props: AdminPostsPageProps) {
 
                 {/* Create Post Modal */}
                 <Dialog open={showCreateModal} onClose={setShowCreateModal}>
-                    <div className="fixed inset-0 z-40 bg-gradient-to-br from-pink-200/60 via-yellow-100/60 to-blue-200/60 backdrop-blur-sm" aria-hidden="true" />
+                    <div className="fixed inset-0 z-40 bg-gradient-to-br backdrop-blur-sm" aria-hidden="true" />
                     <div className="fixed inset-0 z-50 flex items-center justify-center">
                         <Dialog.Panel className="w-full max-w-md rounded-2xl bg-gradient-to-br from-white via-yellow-50 to-pink-50 p-6 shadow-2xl border-2 border-pink-200">
                             <div className="max-h-[80vh] overflow-y-auto">
                                 <div className="mb-4">
-                                    <h2 className="text-xl font-bold text-pink-600">Create New Post</h2>
+                                    <h2 className="text-xl font-bold">Create New Post</h2>
                                     <p className="text-sm text-gray-500">Fill in the details to create a new post.</p>
                                 </div>
                                 <form onSubmit={e => handleCreatePost(e, false)} className="space-y-4">

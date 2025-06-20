@@ -15,10 +15,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-        $this->call(ProvinceSeeder::class);
+         User::updateOrCreate(
+        ['email' => 'thonida2@gamil.com'],
+        [
+            'name' => 'Admin',
+            'password' => bcrypt('Rupp2023@'), // set a secure password here
+            // optionally, 'is_admin' => true, if you have an admin flag
+        ]
+    );
+
+        $this->call([
+        CategorySeeder::class,
+        ProvinceSeeder::class,
+    ]);
     }
 }

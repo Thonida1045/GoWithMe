@@ -1,14 +1,14 @@
 import React from 'react';
 import emailjs from '@emailjs/browser';
-import Conclusion from '@/components/assets/conclusion.webp';
-import Methodology from '@/components/assets/methodology.jpg';
-import PrblemStatement from '@/components/assets/problem statement.jpg';
-import ProjectScope from '@/components/assets/project scopt.jpg';
-import Introduction from '@/components/assets/introduction.png';
-import style from '@/components/assets/style.png'
+import Conclusion from '/public/assets/Conclusion.webp';
+import Methodology from '/public/assets/Methodology.jpg';
+import ProblemStatement from '/public/assets/Problem Statement.jpg';
+import ProjectScope from '/public/assets/project scopt.jpg';
+import Introduction from '/public/assets/introduction.png';
+import style from '/public/assets/style.png'
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import Car from '@/components/assets/car.gif';
+import Car from '/public/assets/Car.gif';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -96,7 +96,7 @@ function AboutMe() {
             Tourists face difficulties in finding trusted travel information, especially for local or lesser-known destinations. Our platform solves this by providing a reliable and curated resource.
           </p>
         </div>
-        <img src={PrblemStatement}  alt="Problem" className="rounded-xl shadow-md border border-gray-200" />
+        <img src={ProblemStatement}  alt="Problem" className="rounded-xl shadow-md border border-gray-200" />
       </section>
       {/* Project Scope */}
       <section className="grid md:grid-cols-2 gap-8 items-center mt-12">
