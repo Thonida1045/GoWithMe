@@ -2,6 +2,7 @@ import trainVideo from '@/components/assets/train.mp4';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
+import { BookOpen, Folder, FolderPlus } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -40,6 +41,30 @@ export default function WelcomePage() {
                         travel, and make memories. You deserve it!
                     </p>
                 </div>
+                <div className="flex justify-center gap-6">
+  <a
+    href="/user/posts"
+    className="flex items-center gap-2 rounded-lg border-2 border-blue-300 px-6 py-3 text-blue-300 hover:bg-blue-300 hover:text-white transition"
+  >
+    <BookOpen className="h-6 w-6" />
+    Blogs
+  </a>
+  <a
+    href="/user/posts?category=12"
+    className="flex items-center gap-2 rounded-lg border-2 border-green-300 px-6 py-3 text-green-300 hover:bg-green-300 hover:text-white transition"
+  >
+    <FolderPlus className="h-6 w-6" />
+    Hotels
+  </a>
+  <a
+    href="/user/aboutme"
+    className="flex items-center gap-2 rounded-lg border-2 border-yellow-300 px-6 py-3 text-yellow-300 hover:bg-yellow-300 hover:text-white transition"
+  >
+    <Folder className="h-6 w-6" />
+    AboutMe
+  </a>
+</div>
+
             </div>
         </AppLayout>
     );

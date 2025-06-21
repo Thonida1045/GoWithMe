@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, PenSquare, FolderPlus, MapPin, Plane } from 'lucide-react';
+import { BookOpen, Folder, PenSquare, FolderPlus, MapPin, Plane, Users } from 'lucide-react';
 
 import { usePage } from '@inertiajs/react';
 
@@ -39,6 +39,11 @@ export function AppSidebar() {
         title: 'Provinces',
         href: '/admin/provinces',
         icon: MapPin,
+    },
+    {
+    title: 'Users',
+    href: '/admin/users',
+    icon: Users, 
     },
 ] : user?.role === 'user' ? [ 
      {

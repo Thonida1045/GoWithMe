@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProvinceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Admin\UserManagementController;
 
 
 Route::get('/', function () {
@@ -18,12 +19,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [PostController::class, 'dashboard'])->name('dashboard');
 });
 
-Route::prefix('admin')->name('admin.')->group(function(){
+Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('categories', CategoryController::class)->except(['show']);
     Route::resource('posts', PostController::class)->except(['show']);
     Route::resource('provinces', ProvinceController::class)->except(['show']);
-    // Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('admin.posts.edit');
+    // Route::resource('users', UserController::class)->except(['show']); // ✅ Added this line
+    Route::resource('users', UserManagementController::class)->except(['show']);
 });
+
 
 Route::prefix('user')-> name('user.')->group(function(){
     Route::resource('posts', UserController::class)->except(['show']);
