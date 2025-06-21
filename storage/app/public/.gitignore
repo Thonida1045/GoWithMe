@@ -1,2 +1,6 @@
 *
-!.gitignore
+!assets/
+!board/
+!posts/
+.gitignore
+!storage/app/public/posts/**

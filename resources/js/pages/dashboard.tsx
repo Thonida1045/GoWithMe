@@ -1,8 +1,7 @@
+import trainVideo from '@/components/assets/train.mp4';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import trainVideo from '@/components/assets/train.mp4';
-
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -15,18 +14,32 @@ export default function WelcomePage() {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Welcome" />
-            <div className="flex h-full flex-1 flex-col gap-8 rounded-xl p-4 bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 shadow-xl">
+            <div className="flex h-full flex-1 flex-col gap-8 rounded-xl bg-gradient-to-br from-blue-50 via-green-50 to-yellow-50 p-4 shadow-xl">
                 <div className="mb-8 text-center">
-                    <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-600 via-blue-600 to-yellow-500 mb-4 drop-shadow-lg animate-fade-in">Welcome to the Cambodia Tourism Blog</h1>
-                    <p className="text-xl text-gray-700 max-w-2xl mx-auto mb-4 animate-fade-in delay-100">
-                        Discover the beauty, culture, and destinations of Cambodia. Explore blog posts, find hotels, and get inspired for your next adventure. This platform helps travelers and locals share experiences, find the best places to stay, and plan memorable journeys across Cambodia—all with a beautiful, easy-to-use interface.
+                    <h1 className="animate-fade-in mb-4 flex items-center justify-center gap-4 bg-gradient-to-r from-green-600 via-blue-600 to-yellow-500 bg-clip-text text-5xl font-extrabold text-transparent drop-shadow-lg">
+                        <img src="https://freesvg.org/img/AngkorWat.png" alt="Angkor Wat" className="h-20 w-20" />
+                        Welcome to the Cambodia Tourism Blog
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/8/83/Flag_of_Cambodia.svg" alt="Flag" className="h-10 w-20" />
+                    </h1>
+
+                    <p className="animate-fade-in mx-auto mb-4 max-w-2xl text-xl text-gray-700 delay-100">
+                        Discover the beauty, culture, and destinations of Cambodia. Explore blog posts, find hotels, and get inspired for your next
+                        adventure. This platform helps travelers and locals share experiences, find the best places to stay, and plan memorable
+                        journeys across Cambodia—all with a beautiful, easy-to-use interface.
                     </p>
-                    <video src={trainVideo} autoPlay loop muted playsInline className="w-full max-w-2xl mx-auto rounded-lg shadow-lg mb-6 animate-fade-in delay-150" />
-                    <p className="text-green-700 font-semibold text-lg max-w-xl mx-auto animate-fade-in delay-200">
-                        Life can be hard, but don't forget to take a break and explore the world around you. Cambodia is waiting for you—get out, travel, and make memories. You deserve it!
+                    <video
+                        src={trainVideo}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="animate-fade-in mx-auto mb-6 w-full max-w-2xl rounded-lg shadow-lg delay-150"
+                    />
+                    <p className="animate-fade-in mx-auto max-w-xl text-lg font-semibold text-green-700 delay-200">
+                        Life can be hard, but don't forget to take a break and explore the world around you. Cambodia is waiting for you—get out,
+                        travel, and make memories. You deserve it!
                     </p>
                 </div>
-                
             </div>
         </AppLayout>
     );

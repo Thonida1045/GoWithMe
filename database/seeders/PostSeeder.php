@@ -643,8 +643,8 @@ class PostSeeder extends Seeder
     ],
     [
         'title' => 'La Plantation',
-        'province' => 'Kampot',
-        'category' => 'Farm',
+        'category' =>  'farm',
+    'province' =>  'kampot', 
         'content' => 'A certified organic farm and a social enterprise, La Plantation is a must-visit in Kampot. It offers free guided tours where visitors can learn about the famous Kampot pepper, as well as other spices, and enjoy tastings.',
         'image' => 'posts/la_plantation.jpg',
         'published_at' => Carbon::now()->subDays(6),
@@ -666,7 +666,7 @@ class PostSeeder extends Seeder
         'province' => 'Kep',
         'category' => 'Island',
         'content' => 'A short boat ride from Kep, Rabbit Island is a rustic paradise with beautiful sandy beaches and clear waters. It\'s a perfect spot for a day trip or an overnight stay in a simple bungalow.',
-        'image' => 'posts/rabbit_island.jpg',
+        'image' => 'rabbit_island_o5115f',
         'published_at' => Carbon::now()->subDays(8),
         'created_at' => Carbon::now()->subDays(8),
         'updated_at' => Carbon::now()->subDays(8),
@@ -755,7 +755,11 @@ class PostSeeder extends Seeder
 
         $finalPosts = [];
         $existingSlugs = [];
-        foreach ($posts as $post) {
+            foreach ($posts as $index => $post) {
+    if (!isset($post['category'], $post['province'])) {
+        throw new \Exception("Missing 'category' or 'province' in post at index {$index}");
+    }
+            
             $categoryKey = strtolower($post['category']);
             $provinceKey = strtolower($post['province']);
             $categoryId = $categoryMap[$categoryKey] ?? null;

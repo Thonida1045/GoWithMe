@@ -20,13 +20,14 @@ class DatabaseSeeder extends Seeder
         [
             'name' => 'Admin',
             'password' => bcrypt('Rupp2023@'), // set a secure password here
-            // optionally, 'is_admin' => true, if you have an admin flag
+            // optionally, 'is_admin' => t rue, if you have an admin flag
         ]
     );
 
         $this->call([
         CategorySeeder::class,
         ProvinceSeeder::class,
+        PostSeeder::class,
     ]);
     }
 }
