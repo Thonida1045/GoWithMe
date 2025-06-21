@@ -42,29 +42,28 @@ export default function WelcomePage() {
                     </p>
                 </div>
                 <div className="flex justify-center gap-6">
-  <a
-    href="/user/posts"
-    className="flex items-center gap-2 rounded-lg border-2 border-blue-300 px-6 py-3 text-blue-300 hover:bg-blue-300 hover:text-white transition"
-  >
-    <BookOpen className="h-6 w-6" />
-    Blogs
-  </a>
-  <a
-    href="/user/posts?category=12"
-    className="flex items-center gap-2 rounded-lg border-2 border-green-300 px-6 py-3 text-green-300 hover:bg-green-300 hover:text-white transition"
-  >
-    <FolderPlus className="h-6 w-6" />
-    Hotels
-  </a>
-  <a
-    href="/user/aboutme"
-    className="flex items-center gap-2 rounded-lg border-2 border-yellow-300 px-6 py-3 text-yellow-300 hover:bg-yellow-300 hover:text-white transition"
-  >
-    <Folder className="h-6 w-6" />
-    AboutMe
-  </a>
-</div>
-
+                    <a
+                        href="/user/posts"
+                        className="flex items-center gap-2 rounded-lg border-2 border-blue-300 px-6 py-3 text-blue-300 transition hover:bg-blue-300 hover:text-white"
+                    >
+                        <BookOpen className="h-6 w-6" />
+                        Blogs
+                    </a>
+                    <a
+                        href="/user/posts?category=12"
+                        className="flex items-center gap-2 rounded-lg border-2 border-green-300 px-6 py-3 text-green-300 transition hover:bg-green-300 hover:text-white"
+                    >
+                        <FolderPlus className="h-6 w-6" />
+                        Hotels
+                    </a>
+                    <a
+                        href="/user/aboutme"
+                        className="flex items-center gap-2 rounded-lg border-2 border-yellow-300 px-6 py-3 text-yellow-300 transition hover:bg-yellow-300 hover:text-white"
+                    >
+                        <Folder className="h-6 w-6" />
+                        AboutMe
+                    </a>
+                </div>
             </div>
         </AppLayout>
     );
